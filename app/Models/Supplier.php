@@ -13,6 +13,7 @@ class Supplier extends Model
         'phone',
         'email',
         'address',
+        
     ];
 
     public function medicines() { return $this->hasMany(Medicine::class); }
