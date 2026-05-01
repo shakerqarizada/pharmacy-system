@@ -21,20 +21,30 @@ class UserController extends Controller
         return view('backend.users.add');
     }
 
-    public function ViewUser(){
+    public function ViewUser()
+    {
         $users = User::all();
-        return view('backend.users.view',compact('users'));
+        return view('backend.users.view', compact('users'));
     }
 
     public function storeUser(Request $request)
     {
+
+
         // Validate the incoming request data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required|string|in:admin,cashier,pharmacist',
+
         ]);
+
+        $image = $request->file('image');
+        $imageName = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+        $image->move(public_path('backend/assets/images/users/'), $imageName);
+        $finalImage = 'backend/assets/images/users/' . $imageName;
+
 
         // Create a new user using the validated data
         User::create([
@@ -42,33 +52,48 @@ class UserController extends Controller
             'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
             'role' => $validatedData['role'],
+            'image' => $finalImage,
         ]);
 
         // Redirect to a desired location with a success message
         return redirect()->route('view-users')->with('success', 'User created successfully.');
     }
 
-    
-    public function editUser($id){
+
+    public function editUser($id)
+    {
         $user = User::findOrFail($id);
         return view('backend.users.edit', compact('user'));
     }
-    public function updateUser(Request $request, $id){
+    public function updateUser(Request $request, $id)
+    {
         $user = User::findOrFail($id);
 
         // Validate the incoming request data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,'.$user->id,
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8',
             'role' => 'required|string|in:admin,cashier,pharmacist',
         ]);
+
+        if ($request->hasFile('image')) {
+            if (file_exists($user->image)) {
+                unlink($user->image);
+            }
+
+            $image = $request->file('image');
+            $imageName = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('backend/assets/images/users/'), $imageName);
+            $finalImage = 'backend/assets/images/users/' . $imageName;
+        }
 
         // Update the user with the validated data
         $user->update([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'role' => $validatedData['role'],
+            'image' => isset($finalImage) ? $finalImage : $user->image,
         ]);
 
         // Update the password if it's provided
@@ -82,8 +107,12 @@ class UserController extends Controller
         return redirect()->route('view-users')->with('success', 'User updated successfully.');
     }
 
-    public function deleteUser($id){
+    public function deleteUser($id)
+    {
         $user = User::findOrFail($id);
+        if (file_exists($user->image)) {
+            unlink($user->image);
+        }
         $user->delete();
         return redirect()->route('view-users')->with('success', 'User deleted successfully.');
     }
@@ -92,23 +121,24 @@ class UserController extends Controller
 
 
     // Categories Start
-    
-    public function ViewCategory(){
+
+    public function ViewCategory()
+    {
         $categories = Categories::all();
-        return view('backend.categories.view',compact('categories'));
+        return view('backend.categories.view', compact('categories'));
     }
 
     public function AddCategory()
     {
-         return view('backend.categories.add');
-     }
-        
+        return view('backend.categories.add');
+    }
+
     public function storeCategory(Request $request)
     {
         // Validate the incoming request data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'description'=>'string',
+            'description' => 'string',
         ]);
 
         // Create a new category using the validated data
@@ -121,19 +151,21 @@ class UserController extends Controller
         return redirect()->route('view-categories')->with('success', 'Category created successfully.');
     }
 
-    
-    public function editCategory($id){
+
+    public function editCategory($id)
+    {
         $category = Categories::findOrFail($id);
         return view('backend.categories.edit', compact('category'));
     }
-    public function updateCategory(Request $request, $id){
+    public function updateCategory(Request $request, $id)
+    {
         $category = Categories::findOrFail($id);
 
         // Validate the incoming request data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-         
+
         ]);
 
         // Update the user with the validated data
@@ -142,13 +174,14 @@ class UserController extends Controller
             'description' => $validatedData['description'],
         ]);
 
-      
+
 
         // Redirect to a desired location with a success message
         return redirect()->route('view-categories')->with('success', 'Category updated successfully.');
     }
 
-    public function deleteCategory($id){
+    public function deleteCategory($id)
+    {
         $category = Categories::findOrFail($id);
         $category->delete();
         return redirect()->route('view-categories')->with('success', 'Category deleted successfully.');
@@ -157,26 +190,27 @@ class UserController extends Controller
     // Categories End
 
     // Suppliers Start
-    
-    public function ViewSupplier(){
+
+    public function ViewSupplier()
+    {
         $suppliers = Supplier::all();
-        return view('backend.suppliers.view',compact('suppliers'));
+        return view('backend.suppliers.view', compact('suppliers'));
     }
 
     public function AddSupplier()
     {
-         return view('backend.suppliers.add');
-     }
-        
+        return view('backend.suppliers.add');
+    }
+
     public function storeSupplier(Request $request)
     {
         // Validate the incoming request data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'contact_person' => 'string|max:255',
-            'phone'=>'string|max:20',
-            'email'=>'email|max:255|unique:suppliers',
-            'address'=>'string|max:255',
+            'phone' => 'string|max:20',
+            'email' => 'email|max:255|unique:suppliers',
+            'address' => 'string|max:255',
 
         ]);
 
@@ -193,12 +227,14 @@ class UserController extends Controller
         return redirect()->route('view-suppliers')->with('success', 'Supplier created successfully.');
     }
 
-    
-    public function editSupplier($id){
+
+    public function editSupplier($id)
+    {
         $supplier = Supplier::findOrFail($id);
         return view('backend.suppliers.edit', compact('supplier'));
     }
-    public function updateSupplier(Request $request, $id){
+    public function updateSupplier(Request $request, $id)
+    {
         $supplier = Supplier::findOrFail($id);
 
         // Validate the incoming request data
@@ -219,13 +255,14 @@ class UserController extends Controller
             'address' => $validatedData['address'],
         ]);
 
-      
+
 
         // Redirect to a desired location with a success message
         return redirect()->route('view-suppliers')->with('success', 'Supplier updated successfully.');
     }
 
-    public function deleteSupplier($id){
+    public function deleteSupplier($id)
+    {
         $supplier = Supplier::findOrFail($id);
         $supplier->delete();
         return redirect()->route('view-suppliers')->with('success', 'Supplier deleted successfully.');

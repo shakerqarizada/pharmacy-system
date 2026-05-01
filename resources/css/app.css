@@ -1,3 +1,100 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  .ph-theme {
+    --ph-bg: #DDFFE7;
+    --ph-sidebar: #98d7c2;
+    --ph-primary: #29A0b1;
+    --ph-accent: #17c1ff;
+    --ph-text: #0b2b2f;
+    --ph-muted: rgba(11, 43, 47, 0.65);
+    --ph-border: rgba(41, 160, 177, 0.22);
+  }
+
+  .ph-theme body {
+    background-color: var(--ph-bg);
+  }
+
+  .ph-theme .bg-gray-100 {
+    background-color: var(--ph-bg) !important;
+  }
+
+  .ph-theme a {
+    color: var(--ph-primary);
+  }
+
+  .ph-theme a:hover {
+    color: var(--ph-accent);
+  }
+
+  .ph-theme .bg-white {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid var(--ph-border);
+  }
+
+  .ph-theme .text-gray-900 {
+    color: var(--ph-text) !important;
+  }
+
+  .ph-theme .text-gray-600,
+  .ph-theme .text-gray-500,
+  .ph-theme .text-gray-400,
+  .ph-theme .text-gray-700 {
+    color: var(--ph-muted) !important;
+  }
+
+  .ph-theme .border-gray-300 {
+    border-color: var(--ph-border) !important;
+  }
+
+  .ph-theme .rounded {
+    border-radius: 10px !important;
+  }
+
+  .ph-theme .focus\:border-indigo-500:focus {
+    border-color: var(--ph-primary) !important;
+  }
+
+  .ph-theme .focus\:ring-indigo-500:focus {
+    --tw-ring-color: rgba(41, 160, 177, 0.35) !important;
+  }
+
+  .ph-theme .focus\:ring-indigo-600:focus {
+    --tw-ring-color: rgba(41, 160, 177, 0.35) !important;
+  }
+
+  .ph-theme .focus\:ring-offset-2:focus {
+    --tw-ring-offset-color: rgba(221, 255, 231, 0.85) !important;
+  }
+
+  .ph-theme .text-indigo-600 {
+    color: var(--ph-primary) !important;
+  }
+
+  .ph-theme .focus\:ring-indigo-500:focus,
+  .ph-theme .focus\:ring-indigo-600:focus {
+    box-shadow: 0 0 0 4px rgba(41, 160, 177, 0.22) !important;
+  }
+
+  .ph-theme .hover\:text-gray-900:hover {
+    color: var(--ph-text) !important;
+  }
+
+  .ph-theme .bg-gray-800 {
+    background-color: var(--ph-primary) !important;
+  }
+
+  .ph-theme .text-white {
+    color: #ffffff !important;
+  }
+
+  .ph-theme .hover\:bg-gray-700:hover {
+    background-color: #238a98 !important;
+  }
+
+  .ph-theme .active\:bg-gray-900:active {
+    background-color: #1e7681 !important;
+  }
+}

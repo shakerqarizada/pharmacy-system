@@ -39,27 +39,26 @@
                                                         <th>Low Stock Threshold</th>
                                                         <th>Expiry Date</th>
                                                         <th>Is Active</th>
-
                                                         <th>Description</th>
                                                         <th>Update</th>
                                                         <th>Delete</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ($medicines as $medicine)
+                                                    @foreach ($sales as $sale)
                                                         <tr>
-                                                            <th>{{ $medicine->id }}</th>
-                                                            <td>{{ $medicine->name }}</td>
-                                                            <td>{{ $medicine->category->name }}</td>
-                                                            <td>{{ $medicine->supplier->name }}</td>
-                                                            <td>{{ $medicine->unit }}</td>
-                                                            <td>{{ $medicine->purchase_price }}</td>
-                                                            <td>{{ $medicine->selling_price }}</td>
-                                                            <td>{{ $medicine->stock }}</td>
-                                                            <td>{{ $medicine->low_stock_threshold }}</td>
-                                                            <td>{{ $medicine->expiry_date }}</td>
-                                                            <td>{{ $medicine->is_active ? "Yes" : "No" }}</td>
-                                                            <td>{{ $medicine->description }}</td>
+                                                            <th>{{ $sale->id }}</th>
+                                                            <td>{{ $sale->invoice_number }}</td>
+                                                            <td>{{ $sale->user_id }}</td>
+                                                            <td>{{ $sale->customer_id }}</td>
+                                                            <td>{{ $sale->unit }}</td>
+                                                            <td>{{ $sale->purchase_price }}</td>
+                                                            <td>{{ $sale->selling_price }}</td>
+                                                            <td>{{ $sale->stock }}</td>
+                                                            <td>{{ $sale->low_stock_threshold }}</td>
+                                                            <td>{{ $sale->expiry_date }}</td>
+                                                            <td>{{ $sale->is_active ? "Yes" : "No" }}</td>
+                                                            <td>{{ $sale->description }}</td>
                                                             <td><a href={{ route('medicines.edit',$medicine->id) }} class="btn btn-sm btn-warning">Update</a></td>
                                                             <td><a href={{ route('medicines.delete',$medicine->id) }} class="btn btn-sm btn-danger">Delete</a></td>
                                         

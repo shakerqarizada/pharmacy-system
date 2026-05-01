@@ -19,7 +19,7 @@
                 </div><!-- end card header -->
         
                                     <div class="card-body">
-                                        <form class="row g-3" action={{ route('user.update', $user->id) }} method="POST">
+                                        <form class="row g-3" action={{ route('user.update', $user->id) }} method="POST" enctype="multipart/form-data">
                                             @csrf
                                             <input type="hidden" value={{ $user->id }} >
                                             <div class="col-md-6">
@@ -48,7 +48,10 @@
                                             <div class="col-md-6">
                                                 <label for="validationServer05" class="form-label">Password</label>
                                                 <input type="password" name="password" class="form-control" placeholder="new password" id="validationServer05" aria-describedby="validationServer05Feedback">
-                                                
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="validationServer05" class="form-label">Image</label>
+                                                <input type="file" name="image" class="form-control" id="validationServer05" aria-describedby="validationServer05Feedback">
                                             </div>
                                         
                                             <div class="col-12">

@@ -30,6 +30,7 @@
                                                         <th scope="col">Name</th>
                                                         <th scope="col">Email</th>
                                                         <th scope="col">Role</th>
+                                                        <th>Image</th>
                                                         <th >Update</th>
                                                         <th>Delete</th>
                                                     </tr>
@@ -37,10 +38,12 @@
                                                 <tbody>
                                                     @foreach ($users as $user)
                                                         <tr>
+
                                                             <th scope="row">{{ $user->id }}</th>
                                                             <td>{{ $user->name }}</td>
                                                             <td>{{ $user->email }}</td>
                                                             <td>{{ $user->role }}</td>
+                                                            <td><img src="{{ $user->image }}" alt="img" style="width: 50px" ></td>
                                                             <td><a href={{ route('user.edit',$user->id) }} class="btn btn-sm btn-warning">Update</a></td>
                                                             <td><a href={{ route('user.delete',$user->id) }} class="btn btn-sm btn-danger">Delete</a></td>
                                         
