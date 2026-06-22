@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class SaleItem extends Model
 {
     //
+    
     protected $fillable = [
     'sale_id', 'medicine_id', 'quantity', 'unit_price', 'subtotal',
     ];

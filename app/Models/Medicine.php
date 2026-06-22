@@ -22,6 +22,14 @@ class Medicine extends Model
         'is_active'
     ];
 
+    protected $casts = [
+        'purchase_price' => 'decimal:2',
+        'selling_price' => 'decimal:2',
+        'stock' => 'decimal:2',
+        'expiry_date' => 'date',
+        'is_active' => 'boolean',
+    ];
+
 
     public function category()
     {

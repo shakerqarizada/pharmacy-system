@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categories;
+use App\Models\Medicine;
+use App\Models\Sale;
+use App\Models\SaleItem;
 use App\Models\User;
 use App\Models\Supplier;
-
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -13,7 +16,105 @@ class UserController extends Controller
     //
     public function UserIndex()
     {
-        return view('backend.index');
+        $today = Carbon::today();
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $expiringSoonDate = Carbon::now()->addDays(30);
+
+        $todaySales = Sale::whereDate('sold_at', $today)->sum('total');
+        $todaySaleCount = Sale::whereDate('sold_at', $today)->count();
+        $monthSales = Sale::where('sold_at', '>=', $startOfMonth)->sum('total');
+        $monthSaleCount = Sale::where('sold_at', '>=', $startOfMonth)->count();
+        $totalMedicines = Medicine::count();
+        $activeMedicines = Medicine::where('is_active', true)->count();
+        $lowStockCount = Medicine::whereColumn('stock', '<=', 'low_stock_threshold')->count();
+        $expiringSoonCount = Medicine::whereNotNull('expiry_date')
+            ->whereBetween('expiry_date', [$today, $expiringSoonDate])
+            ->count();
+
+        $inventoryValue = Medicine::selectRaw('COALESCE(SUM(stock * purchase_price), 0) as value')->value('value');
+        $todayProfit = $this->estimateProfitForSalesSince($today);
+        $monthProfit = $this->estimateProfitForSalesSince($startOfMonth);
+
+        $lowStockMedicines = Medicine::with(['category', 'supplier'])
+            ->whereColumn('stock', '<=', 'low_stock_threshold')
+            ->orderBy('stock')
+            ->limit(6)
+            ->get();
+
+        $expiringMedicines = Medicine::with('supplier')
+            ->whereNotNull('expiry_date')
+            ->whereBetween('expiry_date', [$today, $expiringSoonDate])
+            ->orderBy('expiry_date')
+            ->limit(6)
+            ->get();
+
+        $topSellingMedicines = SaleItem::with('medicine')
+            ->select('medicine_id')
+            ->selectRaw('SUM(quantity) as total_quantity, SUM(subtotal) as total_revenue')
+            ->groupBy('medicine_id')
+            ->orderByDesc('total_quantity')
+            ->limit(6)
+            ->get();
+
+        $cashierPerformance = Sale::with('cashier')
+            ->select('user_id')
+            ->selectRaw('COUNT(*) as sales_count, SUM(total) as sales_total')
+            ->where('sold_at', '>=', $startOfMonth)
+            ->groupBy('user_id')
+            ->orderByDesc('sales_total')
+            ->limit(5)
+            ->get();
+
+        $recentSales = Sale::with(['cashier', 'items'])
+            ->latest('sold_at')
+            ->limit(6)
+            ->get();
+
+        $currentYearSales = Sale::whereBetween('sold_at', [
+                Carbon::now()->startOfYear(),
+                Carbon::now()->endOfYear(),
+            ])
+            ->get(['sold_at', 'total'])
+            ->groupBy(fn ($sale) => $sale->sold_at->format('n'))
+            ->map(fn ($sales) => $sales->sum('total'));
+
+        $monthlySalesLabels = [];
+        $monthlySalesData = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $monthlySalesLabels[] = Carbon::create(now()->year, $month, 1)->format('M');
+            $monthlySalesData[] = round((float) ($currentYearSales[$month] ?? 0), 2);
+        }
+
+        return view('backend.index', compact(
+            'todaySales',
+            'todaySaleCount',
+            'monthSales',
+            'monthSaleCount',
+            'totalMedicines',
+            'activeMedicines',
+            'lowStockCount',
+            'expiringSoonCount',
+            'inventoryValue',
+            'todayProfit',
+            'monthProfit',
+            'lowStockMedicines',
+            'expiringMedicines',
+            'topSellingMedicines',
+            'cashierPerformance',
+            'recentSales',
+            'monthlySalesLabels',
+            'monthlySalesData'
+        ));
+    }
+
+    private function estimateProfitForSalesSince(Carbon $date): float
+    {
+        return (float) SaleItem::query()
+            ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
+            ->join('medicines', 'sale_items.medicine_id', '=', 'medicines.id')
+            ->where('sales.sold_at', '>=', $date)
+            ->selectRaw('COALESCE(SUM(sale_items.subtotal - (sale_items.quantity * medicines.purchase_price)), 0) as profit')
+            ->value('profit');
     }
 
     public function AddUser()

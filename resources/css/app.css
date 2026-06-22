@@ -97,4 +97,12 @@
   .ph-theme .active\:bg-gray-900:active {
     background-color: #1e7681 !important;
   }
+
+  .ph-theme input[type="checkbox"] {
+    accent-color: var(--ph-primary) !important;
+  }
+
+  .ph-theme .text-indigo-600 {
+    color: var(--ph-primary) !important;
+  }
 }

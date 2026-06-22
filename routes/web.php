@@ -46,7 +46,6 @@ Route::controller(UserController::class)->group(function () {
 // Medicines
 Route::controller(MedicineController::class)->group(function () {
 
-
     Route::get('/add-medicine', 'AddMedicine')->middleware(['auth', 'verified'])->name('add-medicine');
     Route::post('/store-medicines',  'storeMedicine')->name('medicines.store');
     Route::get('/view-medicines', 'ViewMedicine')->name('view-medicines');
@@ -76,7 +75,7 @@ Route::controller(SalesController::class)->group(function () {
     Route::post('/edit-sales/{id}',  'updateSales')->name('sales.update');
     Route::get('/delete-sales/{id}', 'deleteSales')->name('sales.delete');
 
-// Sales Items
+    // Sales Items
     Route::get('/view-sales-items', 'ViewSalesItems')->name('view-sales-items');
 });
 

@@ -22,6 +22,7 @@ class SalesController extends Controller
     }
     public function storeSales(Request $request)
     {
+
         $validated = $request->validate([
             'invoice_number' => 'required|unique:sales,invoice_number',
             'user_id' => 'required|exists:users,id',
@@ -40,22 +41,19 @@ class SalesController extends Controller
         ]);
         DB::beginTransaction();
         try {
-            // Find or create customer by name
-            $customer = Customer::firstOrCreate([
-                'name' => $validated['customer'],
-            ]);
             // Save main sale
             $sale = Sale::create([
                 'invoice_number' => $validated['invoice_number'],
                 'user_id' => $validated['user_id'],
-                'customer_id' => $customer->id,
-                'subtotal' => $validated['subtotal'],
+                'customer' => $validated['customer'],
+                'sub_total' => $validated['subtotal'],
                 'discount' => $validated['discount_amount'],
                 'total' => $validated['total'],
                 'paid' => $validated['paid'],
                 'change' => $validated['change'],
                 'sold_at' => $validated['sold_date'],
             ]);
+
 
             // Save sale items
             foreach ($validated['items'] as $item) {
@@ -84,20 +82,20 @@ class SalesController extends Controller
 
     public function viewSales()
     {
-        $sales = Sale::with(['cashier', 'customer', 'items.medicine'])->orderBy('created_at', 'desc')->get();
+        $sales = Sale::with(['cashier', 'items.medicine'])->orderBy('created_at', 'desc')->get();
         return view('backend.sales.view', compact('sales'));
     }
 
-    public function editSale($id)
+    public function editSales($id)
     {
-        $sale = Sale::with(['items.medicine', 'customer', 'cashier'])->findOrFail($id);
+        $sale = Sale::with(['items.medicine', 'cashier'])->findOrFail($id);
         $users = User::all();
         $medicines = Medicine::all();
         $customers = Customer::all();
         return view('backend.sales.edit', compact('sale', 'users', 'medicines', 'customers'));
     }
 
-    public function updateSale(Request $request, $id)
+    public function updateSales(Request $request, $id)
     {
         $validated = $request->validate([
             'invoice_number' => 'required|unique:sales,invoice_number,' . $id,
@@ -118,14 +116,11 @@ class SalesController extends Controller
         DB::beginTransaction();
         try {
             $sale = Sale::findOrFail($id);
-            $customer = Customer::firstOrCreate([
-                'name' => $validated['customer'],
-            ]);
             $sale->update([
                 'invoice_number' => $validated['invoice_number'],
                 'user_id' => $validated['user_id'],
-                'customer_id' => $customer->id,
-                'subtotal' => $validated['subtotal'],
+                'customer' => $validated['customer'],
+                'sub_total' => $validated['subtotal'],
                 'discount' => $validated['discount_amount'],
                 'total' => $validated['total'],
                 'paid' => $validated['paid'],
@@ -167,7 +162,7 @@ class SalesController extends Controller
         }
     }
 
-    public function deleteSale($id)
+    public function deleteSales($id)
     {
         DB::beginTransaction();
         try {
@@ -188,5 +183,12 @@ class SalesController extends Controller
             DB::rollBack();
             return back()->with('error', 'Error: ' . $e->getMessage());
         }
+    }
+
+    // View all sale items (route: view-sales-items)
+    public function ViewSalesItems()
+    {
+        $items = SaleItem::with(['sale', 'medicine'])->orderBy('created_at', 'desc')->get();
+        return view('backend.sales.items', compact('items'));
     }
 }
