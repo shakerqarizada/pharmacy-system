@@ -5,6 +5,7 @@ use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\TemperatureController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -77,6 +78,12 @@ Route::controller(SalesController::class)->group(function () {
 
     // Sales Items
     Route::get('/view-sales-items', 'ViewSalesItems')->name('view-sales-items');
+});
+
+// Temperature
+Route::controller(TemperatureController::class)->group(function () {
+    Route::post('/store-temperature', 'store')->name('temperature.store');
+    Route::get('/view-temperature', 'index')->name('temperature.index');
 });
 
 

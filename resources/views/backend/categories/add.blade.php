@@ -39,7 +39,7 @@
                                             
                                         
                                             <div class="col-12">
-                                                <button class="btn btn-success" type="submit">Add User</button>
+                                                <button class="btn btn-success" type="submit">Add Category</button>
                                             </div>
                                         </form>
                                     </div> <!-- end card-body -->

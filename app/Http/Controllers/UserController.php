@@ -6,6 +6,7 @@ use App\Models\Categories;
 use App\Models\Medicine;
 use App\Models\Sale;
 use App\Models\SaleItem;
+use App\Models\TemperatureLog;
 use App\Models\User;
 use App\Models\Supplier;
 use Carbon\Carbon;
@@ -29,6 +30,13 @@ class UserController extends Controller
         $lowStockCount = Medicine::whereColumn('stock', '<=', 'low_stock_threshold')->count();
         $expiringSoonCount = Medicine::whereNotNull('expiry_date')
             ->whereBetween('expiry_date', [$today, $expiringSoonDate])
+            ->count();
+
+        // Temperature monitoring
+        $latestTemperature = TemperatureLog::latest()->first();
+        $recentTemperatureLogs = TemperatureLog::latest()->take(5)->get();
+        $temperatureAlarmCount = TemperatureLog::where('alarm', true)
+            ->where('created_at', '>=', $today)
             ->count();
 
         $inventoryValue = Medicine::selectRaw('COALESCE(SUM(stock * purchase_price), 0) as value')->value('value');
@@ -103,7 +111,10 @@ class UserController extends Controller
             'cashierPerformance',
             'recentSales',
             'monthlySalesLabels',
-            'monthlySalesData'
+            'monthlySalesData',
+            'latestTemperature',
+            'recentTemperatureLogs',
+            'temperatureAlarmCount'
         ));
     }
 

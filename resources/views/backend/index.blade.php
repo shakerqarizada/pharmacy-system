@@ -123,6 +123,165 @@
                     </div>
                 </div>
 
+                <!-- Temperature Monitoring Section -->
+                <div class="row g-3 mt-1">
+                    <div class="col-xl-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <div class="border border-dark rounded-2 me-2 widget-icons-sections">
+                                            <i data-feather="thermometer" class="widgets-icons"></i>
+                                        </div>
+                                        <h5 class="card-title mb-0">Temperature Monitoring</h5>
+                                    </div>
+                                    @if($latestTemperature && $latestTemperature->alarm)
+                                        <span class="badge bg-danger">ALARM</span>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                @if($latestTemperature)
+                                    <div class="row g-3">
+                                        <div class="col-6">
+                                            <div class="text-center p-3 rounded {{ $latestTemperature->alarm ? 'bg-danger-subtle' : 'bg-success-subtle' }}">
+                                                <div class="text-muted fs-14">Temperature</div>
+                                                <h2 class="fw-semibold mb-0 {{ $latestTemperature->alarm ? 'text-danger' : 'text-success' }}">
+                                                    {{ number_format($latestTemperature->temperature, 1) }}°C
+                                                </h2>
+                                                <div class="fs-13 {{ $latestTemperature->alarm ? 'text-danger' : 'text-success' }}">
+                                                    {{ $latestTemperature->status }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-center p-3 rounded bg-info-subtle">
+                                                <div class="text-muted fs-14">Humidity</div>
+                                                <h2 class="fw-semibold mb-0 text-info">
+                                                    {{ number_format($latestTemperature->humidity, 1) }}%
+                                                </h2>
+                                                <div class="fs-13 text-muted">
+                                                    Normal
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 text-muted fs-13">
+                                        <i data-feather="clock" style="height: 14px; width: 14px"></i>
+                                        Last updated: {{ $latestTemperature->created_at->format('M d, Y H:i') }}
+                                    </div>
+                                @else
+                                    <div class="text-center py-4 text-muted">
+                                        <i data-feather="thermometer" style="height: 48px; width: 48px"></i>
+                                        <p class="mt-2 mb-0">No temperature data available</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <div class="d-flex align-items-center">
+                                    <div class="border border-dark rounded-2 me-2 widget-icons-sections">
+                                        <i data-feather="plus-circle" class="widgets-icons"></i>
+                                    </div>
+                                    <h5 class="card-title mb-0">Log Temperature</h5>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form action="{{ route('temperature.store') }}" method="POST">
+                                    @csrf
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Temperature (°C)</label>
+                                            <input type="number" step="0.1" name="temperature" class="form-control" required min="-50" max="100" placeholder="e.g., 22.5">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Humidity (%)</label>
+                                            <input type="number" step="0.1" name="humidity" class="form-control" required min="0" max="100" placeholder="e.g., 45">
+                                        </div>
+                                        <div class="col-12">
+                                            <button type="submit" class="btn btn-primary w-100">
+                                                <i data-feather="save" style="height: 16px; width: 16px"></i>
+                                                Log Temperature
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                @if($temperatureAlarmCount > 0)
+                                    <div class="alert alert-danger mt-3 mb-0">
+                                        <i data-feather="alert-triangle" style="height: 16px; width: 16px"></i>
+                                        {{ $temperatureAlarmCount }} temperature alarm{{ $temperatureAlarmCount === 1 ? '' : 's' }} today
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Temperature Logs -->
+                <div class="row g-3 mt-1">
+                    <div class="col-xl-12">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <div class="d-flex align-items-center">
+                                    <div class="border border-dark rounded-2 me-2 widget-icons-sections">
+                                        <i data-feather="list" class="widgets-icons"></i>
+                                    </div>
+                                    <h5 class="card-title mb-0">Recent Temperature Logs</h5>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                @if($recentTemperatureLogs->count() > 0)
+                                    <div class="table-responsive">
+                                        <table class="table table-nowrap align-middle mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date & Time</th>
+                                                    <th>Temperature</th>
+                                                    <th>Humidity</th>
+                                                    <th>Status</th>
+                                                    <th>Alarm</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($recentTemperatureLogs as $log)
+                                                    <tr>
+                                                        <td>{{ $log->created_at->format('M d, Y H:i') }}</td>
+                                                        <td>{{ number_format($log->temperature, 1) }}°C</td>
+                                                        <td>{{ number_format($log->humidity, 1) }}%</td>
+                                                        <td>
+                                                            <span class="badge {{ $log->status === 'Normal' ? 'bg-success' : ($log->status === 'Warning' ? 'bg-warning' : 'bg-danger') }}">
+                                                                {{ $log->status }}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            @if($log->alarm)
+                                                                <span class="badge bg-danger">
+                                                                    <i data-feather="alert-triangle" style="height: 14px; width: 14px"></i>
+                                                                    Yes
+                                                                </span>
+                                                            @else
+                                                                <span class="badge bg-success">No</span>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @else
+                                    <div class="text-center py-4 text-muted">
+                                        <p class="mb-0">No temperature logs available</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row g-3 mt-1">
                     <div class="col-xl-8">
                         <div class="card h-100">
