@@ -75,6 +75,7 @@ Route::controller(SalesController::class)->group(function () {
     Route::get('/update-sales/{id}', 'editSales')->name('sales.edit');
     Route::post('/edit-sales/{id}',  'updateSales')->name('sales.update');
     Route::get('/delete-sales/{id}', 'deleteSales')->name('sales.delete');
+    Route::get('/print-sales/{id}', 'printSales')->name('sales.print');
 
     // Sales Items
     Route::get('/view-sales-items', 'ViewSalesItems')->name('view-sales-items');

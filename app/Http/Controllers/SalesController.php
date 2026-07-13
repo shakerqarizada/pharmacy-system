@@ -185,6 +185,12 @@ class SalesController extends Controller
         }
     }
 
+    public function printSales($id)
+    {
+        $sale = Sale::with(['items.medicine', 'cashier'])->findOrFail($id);
+        return view('backend.sales.print', compact('sale'));
+    }
+
     // View all sale items (route: view-sales-items)
     public function ViewSalesItems()
     {

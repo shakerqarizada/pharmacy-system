@@ -52,7 +52,7 @@
 
                   <!-- item-->
                   <a
-                    href="pages-profile.html"
+                    href="{{route('profile.edit')}}"
                     class="dropdown-item notify-item"
                   >
                     <i
@@ -61,22 +61,18 @@
                     <span>My Account</span>
                   </a>
 
-                  <!-- item-->
-                  <a
-                    href="auth-lock-screen.html"
-                    class="dropdown-item notify-item"
-                  >
-                    <i class="mdi mdi-lock-outline fs-16 align-middle"></i>
-                    <span>Lock Screen</span>
-                  </a>
-
                   <div class="dropdown-divider"></div>
 
                   <!-- item-->
-                  <a href="auth-logout.html" class="dropdown-item notify-item">
-                    <i class="mdi mdi-location-exit fs-16 align-middle"></i>
-                    <span>Logout</span>
-                  </a>
+                  
+                  <form action="{{route('logout')}}" method="POST">
+                    @csrf
+                    <button type="submit" class="dropdown-item notify-item">
+                      <i class="mdi mdi-location-exit fs-16 align-middle"></i>
+                      <span>Logout</span>
+                    </button>
+                  </form>
+            
                 </div>
               </li>
             </ul>

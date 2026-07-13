@@ -35,6 +35,7 @@
                                                     <th>Change</th>
                                                     <th>Sold Date</th>
                                                     <th>Created</th>
+                                                    <th>Print</th>
                                                     <th>Update</th>
                                                     <th>Delete</th>
                                                 </tr>
@@ -46,7 +47,7 @@
                                                         <td>{{ $sale->invoice_number }}</td>
                                                         <td>{{ optional($sale->cashier)->name ?? $sale->user_id }}</td>
                                                         <td>{{ $sale->customer }}</td>
-                                                        <td>{{ number_format($sale->subtotal, 2) }}</td>
+                                                        <td>{{ number_format($sale->sub_total ?? $sale->subtotal, 2) }}</td>
                                                         <td>{{ number_format($sale->discount, 2) }}</td>
                                                         <td>{{ number_format($sale->total, 2) }}</td>
                                                         <td>{{ number_format($sale->paid, 2) }}</td>
@@ -54,6 +55,8 @@
                                                         <td>{{ $sale->sold_at ? $sale->sold_at->format('Y-m-d') : '' }}</td>
                                                         <td>{{ $sale->created_at ? $sale->created_at->format('Y-m-d') : '' }}
                                                         </td>
+                                                        <td><a href="{{ route('sales.print', $sale->id) }}" target="_blank"
+                                                                class="btn btn-sm btn-info"> Print</a></td>
                                                         <td><a href="{{ route('sales.edit', $sale->id) }}"
                                                                 class="btn btn-sm btn-warning">Update</a></td>
                                                         <td><a href="{{ route('sales.delete', $sale->id) }}"

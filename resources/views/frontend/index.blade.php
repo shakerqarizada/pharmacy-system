@@ -410,7 +410,7 @@
                         <h4>Pharmacy System</h4>
                         <p class="small">Quality healthcare products with expert advice. Serving the community with
                             care.</p>
-                        <p class="small">Address: 123 Main St • Phone: (123) 456-7890</p>
+                        <p class="small">Address: 123 Main St • Phone: +93(0)72929565</p>
                     </div>
                     <div class="col-md-3">
                         <h5>Quick Links</h5>
@@ -423,7 +423,7 @@
                     </div>
                     <div class="col-md-3">
                         <h5>Contact</h5>
-                        <p class="small">support@pharmacy.example</p>
+                        <p class="small">afghanshaker21@gmail.com</p>
                         <p class="small">Mon–Sat • 8am–8pm</p>
                         <div class="social mt-2">
                             <a href="#" aria-label="facebook"><i class="fab fa-facebook-f"></i></a>

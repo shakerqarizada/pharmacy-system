@@ -177,7 +177,10 @@
                                             value="{{ $sale->sold_at ? $sale->sold_at->format('Y-m-d') : '' }}" required>
                                     </div>
 
-                                    <div class="col-12">
+                                    <div class="col-12 d-flex gap-2">
+                                        <a href="{{ route('sales.print', $sale->id) }}" target="_blank" class="btn btn-info">
+                                            <i data-feather="printer" style="height: 16px; width: 16px"></i> Print Invoice
+                                        </a>
                                         <button class="btn btn-success" type="submit">Update Sale</button>
                                     </div>
                                 </form>

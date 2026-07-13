@@ -17,17 +17,13 @@ class TemperatureController extends Controller
 
         $temperature = $request->temperature;
         $humidity = $request->humidity;
-        
+
         // Determine status based on temperature thresholds
         $status = 'Normal';
         $alarm = false;
-        
-        if ($temperature > 25 || $temperature < 15) {
-            $status = 'Warning';
-            $alarm = true;
-        }
-        
-        if ($temperature > 30 || $temperature < 10) {
+
+
+        if ($temperature > 30 || $temperature < 25) {
             $status = 'Critical';
             $alarm = true;
         }
@@ -47,7 +43,7 @@ class TemperatureController extends Controller
         $recentLogs = TemperatureLog::latest()->take(10)->get();
         $latestLog = TemperatureLog::latest()->first();
         $alarmCount = TemperatureLog::where('alarm', true)->where('created_at', '>=', now()->subHours(24))->count();
-        
+
         return view('backend.temperature.index', compact('recentLogs', 'latestLog', 'alarmCount'));
     }
 }
